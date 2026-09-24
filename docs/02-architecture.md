@@ -4,7 +4,39 @@
 
 The FEIN architecture provides a structured, verifiable bridge between two sovereign enterprise runtimes. It guarantees that commitments are bound, verified, and settled atomically without requiring either organization to yield control over its domestic environment.
 
-![FEIN Architecture](../artifacts/architecture-diagram.png)
+```mermaid
+flowchart TD
+    OrgA["Org A<br/><b>(Domestic Runtime)</b>"]
+    OrgB["Org B<br/><b>(Domestic Runtime)</b>"]
+
+    OrgA -->|"Discovery (NANDA Index)"| OrgB
+    OrgA <-.->|"Negotiation (A2A)"| OrgB
+
+    TCB["<b>Transaction Control Block (TCB)</b><br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>• TID<br/>• Contract hash<br/>• verifier ID<br/>• TTL<br/>• risk-ceiling (TO-TS)"]
+
+    OrgA -->|"Lock Capital Commitment"| TCB
+    OrgB -->|"Lock Deliverable Hash"| TCB
+
+    Escrow["<b>Escrow (Stateless 2-of-3 MPC)</b><br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>• Buyer<br/>• Seller<br/>• Selected Verifier"]
+
+    TCB --> Escrow
+
+    Coordinator["<b>Settlement Coordinator</b><br/><i>(Atomic DvP Arbiter)</i>"]
+
+    Escrow --> Coordinator
+
+    Receipt["Append receipt"]
+    TokenLog["Commit token log"]
+    FundTransfer["Execute fund transfer"]
+
+    Coordinator --> Receipt
+    Coordinator --> TokenLog
+    Coordinator --> FundTransfer
+
+    FundTransfer -.->|"Financial Transaction through AP2"| OrgB
+```
+
+> **Source Specification**: See [artifacts/architecture-diagram.mmd](../artifacts/architecture-diagram.mmd) for the standalone Mermaid source.
 
 ---
 
